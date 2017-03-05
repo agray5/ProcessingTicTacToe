@@ -71,6 +71,7 @@ public void draw(){
     if(!gameOver){
        nextTurn = false;
        if(turn == 0){
+         
          compTurn();
       }
     }
@@ -85,28 +86,30 @@ public void draw(){
      float y = mouseY;
      int block; // can be between 0-8
      
+     int h = height - 100; //as if the board where 640 x640
+     
      //assume 3 X 3 array
      //Choose grid block based on x and y of players click
      if(x < width/3){
-       if(y < height/3)
+       if(y < h/3 + 100)
          block = 0;
-       else if(y < 2*height/3)
+       else if(y < 2*h/3 + 100)
          block = 3;
        else
          block = 6;
      }
      else if(x < 2*width/3){
-       if(y < height/3)
+       if(y < h/3+ 100)
          block = 1;
-       else if(y < 2*height/3)
+       else if(y < 2*h/3 + 100)
          block = 4;
        else
          block = 7;
      }
      else{
-       if(y < height/3)
+       if(y < h/3 + 100)
          block = 2;
-       else if(y < 2*height/3)
+       else if(y < 2*h/3 + 100)
          block = 5;
        else
          block = 8;
@@ -195,15 +198,28 @@ public boolean checkForWin(){
 }
 
 public void drawGrid(){
+  String turnText;
+  
+  if(turn == 1)
+    timer();
+  
    background(50);
+   stroke(255);
+   
+   switch(turn){
+   case 0: turnText = "Computer"; break;
+   case 1: turnText = "Player"; break;
+   default: turnText = "Error";
+   }
     
-    stroke(255);
+    text("Turn: "+ turnText, 100, 50);
     
+    int t = height - 100;
     //draw grid
-   line(width/3, 0, width/3, height);
-   line(2*width/3, 0, 2*width/3, height);
-   line(0, height/3, width, height/3);
-   line(0, 2*height/3, width, 2*height/3);
+   line(width/3, 100, width/3, height);
+   line(2*width/3, 100, 2*width/3, height);
+   line(0, t/3 + 100, width, t/3 + 100);
+   line(0, 2*t/3 + 100, width, 2*t/3 + 100);
    
    //fill in grid
    int h, w;
@@ -211,7 +227,7 @@ public void drawGrid(){
    int multw = 1; // to set proper width 
    int multh = 1; // to set proper height;
    for(int i = 0; i < markers.length / 3; i++){
-     h = height/6 * multh;
+     h = ((height - 100)/6 * multh) + 100;
      multw = 1; // reset multw for next row, so that it starts at the begining of row
      for(int j = 0; j < 3; j++){
        w = width/6 * multw;
@@ -229,7 +245,7 @@ public void winScreen(){
   println("Win Screen");
   
   String winText;
-  
+  fill(30,144,255);
    //background(0);
    
    switch(winner){
@@ -245,7 +261,7 @@ public void timer(){
   float startTime = millis();
   while(millis() - startTime < 1000){};
 }
-  public void settings() {  size(640, 640); }
+  public void settings() {  size(640, 740); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "ticTacToe" };
     if (passedArgs != null) {
