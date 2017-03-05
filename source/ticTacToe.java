@@ -27,16 +27,15 @@ char markers[] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 ArrayList<Integer> emptySpaces = new ArrayList<Integer>(); // will hold the possible spaces for the computer to choose
 int turn; // 0 for computer, 1 for player
 boolean nextTurn; //only redraw when it is the next turn
-int start; //store curret time for timer
-boolean gameOver = false;
+boolean gameOver;
 int winner; // 0 for comp, 1 for player, -1 for tie
+int c = 0;
 
 public void setup(){
   
   f = createFont("Candara", 24);
   textFont(f);
   textAlign(CENTER, CENTER);
-  start = millis();
   gameOver = false;
   
   //initlize emptySpaces
@@ -54,43 +53,30 @@ public void setup(){
 
 public void draw(){
   if(nextTurn == true){
-    background(50);
-    
-    stroke(255);
-    
-    //draw grid
-   line(width/3, 0, width/3, height);
-   line(2*width/3, 0, 2*width/3, height);
-   line(0, height/3, width, height/3);
-   line(0, 2*height/3, width, 2*height/3);
-   
-   //fill in grid
-   int h, w;
-   int counter = 0;
-   int multw = 1; // to set proper width 
-   int multh = 1; // to set proper height;
-   for(int i = 0; i < markers.length / 3; i++){
-     h = height/6 * multh;
-     multw = 1; // reset multw for next row, so that it starts at the begining of row
-     for(int j = 0; j < 3; j++){
-       w = width/6 * multw;
-        text(markers[counter], w, h);
-        counter++;
-        multw += 2;
-        
+    c++;
+     drawGrid();
+     println("draw grid 1, c:" + c);
+       if(gameOver){
+         
+         nextTurn =  false;
+         timer();
+         
+        println("win");
+         
+         winScreen();
      }
-     multh += 2;
    } 
-     if(gameOver)
-       winScreen();
-    else{
+   
+
+    if(!gameOver){
        nextTurn = false;
        if(turn == 0){
          compTurn();
-       }
+      }
     }
   }
-}
+
+
 
 
  public void mousePressed(){
@@ -130,9 +116,9 @@ public void draw(){
      if(emptySpaces.contains(block)){
        placeMarker(block);
      }
-       
+       println("Player Turn");
    } 
-   println("Player Turn");
+   
  }
  
  public void compTurn(){
@@ -170,13 +156,14 @@ public void draw(){
      nextTurn = true;
  }
  
+ 
 public boolean checkForWin(){
   char mark;
   if(turn == 0){
     mark = compMarker;
   }
   else{
-     mark = playerMarker;
+    mark = playerMarker;
   }
   
   //Check Board for win
@@ -186,7 +173,10 @@ public boolean checkForWin(){
   }
   else{
     //check for diagonal win
-     if (markers[0] == mark && markers[5] == mark && markers[8] == mark){ winner = turn; return true; }
+     if (markers[0] == mark && markers[4] == mark && markers[8] == mark || markers[2] == mark && markers[4] == mark && markers[6] == mark){ 
+       winner = turn; 
+       return true; 
+     }
      //check for horizontal or vertical win
      else{
        for(int i = 0; i < 3; i++){
@@ -204,13 +194,43 @@ public boolean checkForWin(){
   return false;
 }
 
+public void drawGrid(){
+   background(50);
+    
+    stroke(255);
+    
+    //draw grid
+   line(width/3, 0, width/3, height);
+   line(2*width/3, 0, 2*width/3, height);
+   line(0, height/3, width, height/3);
+   line(0, 2*height/3, width, 2*height/3);
+   
+   //fill in grid
+   int h, w;
+   int counter = 0;
+   int multw = 1; // to set proper width 
+   int multh = 1; // to set proper height;
+   for(int i = 0; i < markers.length / 3; i++){
+     h = height/6 * multh;
+     multw = 1; // reset multw for next row, so that it starts at the begining of row
+     for(int j = 0; j < 3; j++){
+       w = width/6 * multw;
+        text(markers[counter], w, h);
+        counter++;
+        multw += 2;
+        
+     }
+     multh += 2;
+   }
+}
+
 
 public void winScreen(){
-  println("Win");
-  timer();
+  println("Win Screen");
+  
   String winText;
   
-   background(0);
+   //background(0);
    
    switch(winner){
    case 0: winText = "Sorry the computer wins this round! :("; break;
@@ -223,9 +243,9 @@ public void winScreen(){
 
 public void timer(){
   float startTime = millis();
-  while(millis() - startTime < 2000){};
+  while(millis() - startTime < 1000){};
 }
-  public void settings() {  size(640, 360); }
+  public void settings() {  size(640, 640); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "ticTacToe" };
     if (passedArgs != null) {
